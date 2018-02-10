@@ -10,18 +10,32 @@
 
 class ValChecker {
 public:
-	static bool check(std::deque<std::string> tokens) {
+	static std::string check(std::deque<std::string> tokens) {
 		if (tokens.size() <= 7)
-			return false;
-		if (isdigit(tokens[0].at(0)))
-			return false;
+			return "Incomplete data collected";
+
+		if (!isInteger(tokens[0]))
+			return "Wrong type in column 1";
+
 		if (tokens[1].empty())
-			return false;
-		if (dateIsValid(tokens[2]))
-			return false;
+			return "Swimmer Name not provided";
+
+		if (!dateIsValid(tokens[2]))
+			return "Invalid date of birth provided";
+
+		if (!isInteger(tokens[3]))
+			return "Wrong type in column four";
 
 	}
 
+
+private:
+	static bool isInteger(std::string data) {
+		for (int i = 0; i < data.size(); i++)
+			if (!isdigit(data[i]))
+				return false;
+		return true;
+	}
 
 	static bool dateIsValid(std::string &s_date) {
 		//Date format: DD/MM/YYYY
@@ -48,6 +62,5 @@ public:
 
 		return false;
 	}
-
 };
 #endif
