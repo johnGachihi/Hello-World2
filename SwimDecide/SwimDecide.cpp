@@ -14,7 +14,7 @@
 std::string fileName = "c:\\users\\john\\desktop\\book1.csv";
 
 int main(){
-	std::ifstream fin(fileName);
+	/*std::ifstream fin(fileName);
 
 	while (!fin) {
 		std::cout << "Problem opening file.\n";
@@ -30,6 +30,14 @@ int main(){
 			std::cout << *it << "_";
 		std::cout << '\n';
 		std::cout << words.size();
+	}*/
+
+	std::string num = "23.4e";
+	try {
+		double n = std::stod(num);
+	}
+	catch (std::invalid_argument e) {
+		std::cout << e.what();
 	}
 
 	system("pause");

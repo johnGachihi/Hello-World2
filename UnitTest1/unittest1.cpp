@@ -19,8 +19,13 @@ namespace UnitTest1
 		}
 
 		TEST_METHOD(IsDigitTester) {
-			std::string heat = "123";
-			Assert::AreEqual(true, ValChecker::isInteger(heat));
+			std::string data = "m1234";
+			Assert::AreEqual(false, ValChecker::isInteger(data, 0, data.size() - 1));
+		}
+
+		TEST_METHOD(DistanceIsValidTester) {
+			std::string distance = "-";
+			Assert::AreEqual(true, ValChecker::distanceIsValid(distance));
 		}
 
 	};

@@ -26,10 +26,33 @@ public:
 		if (!isInteger(tokens[3]))
 			return "Wrong type in column four";
 
+		if (!distanceIsValid(tokens[4]))
+			return "Distance is in wrong format";
 	}
 
 
-private:
+	static bool distanceIsValid(std::string dis) {
+		if (dis == "-") return true;
+		std::string::size_type sz;
+		try {
+			std::stod(dis, &sz);
+		}
+		catch (std::invalid_argument& e) {
+			return false;
+		}
+		std::string unit = dis.substr(sz);
+		if (unit != "M" && unit != "m") return false;
+
+		return true;
+	}
+
+	static bool isInteger(std::string data, int start, int range) {
+		for (int i = start; i < range; i++)
+			if (!isdigit(data[i]))
+				return false;
+		return true;
+	}
+
 	static bool isInteger(std::string data) {
 		for (int i = 0; i < data.size(); i++)
 			if (!isdigit(data[i]))
