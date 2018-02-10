@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "
+#include "../SwimDecide/ValChecker.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -10,9 +10,16 @@ namespace UnitTest1
 	{
 	public:
 		
-		TEST_METHOD(TestMethod1)
+		TEST_METHOD(DateValidityCheck)
 		{
-			// TODO: Your test code here
+			bool isValid = false;
+			std::string date = "34/5/2222";
+			Assert::AreEqual(isValid, ValChecker::dateIsValid(date));
+			Assert::AreEqual(false, ValChecker::dateIsValid(date));
+		}
+
+		TEST_METHOD(AnotherOne) {
+
 		}
 
 	};

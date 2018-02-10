@@ -22,7 +22,7 @@ public:
 
 	}
 
-private:
+
 	static bool dateIsValid(std::string &s_date) {
 		//Date format: DD/MM/YYYY
 		std::string splitDate[3];
@@ -43,7 +43,7 @@ private:
 
 		if (std::stoi(splitDate[0]) <= 31 &&
 			std::stoi(splitDate[1]) <= 12 &&
-			splitDate[2].size == 4)
+			splitDate[2].size() == 4)
 			return true;
 
 		return false;
