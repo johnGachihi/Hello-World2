@@ -13,19 +13,14 @@ namespace UnitTest1
 		TEST_METHOD(DateValidityCheck)
 		{
 			bool isValid = false;
-			std::string date = "34/5/2222";
-			/*Assert::AreEqual(isValid, ValChecker::dateIsValid(date));
-			Assert::AreEqual(false, ValChecker::dateIsValid(date));*/
+			std::string date = "  12/12/1998";
+			//Assert::AreEqual(isValid, ValChecker::dateIsValid(date));
+			Assert::AreEqual(true, ValChecker::dateIsValid(date));
 		}
 
-		TEST_METHOD(IsDigitTester) {
-			std::string data = "m1234";
-			Assert::AreEqual(false, ValChecker::isInteger(data, 0, data.size() - 1));
-		}
-
-		TEST_METHOD(DistanceIsValidTester) {
-			std::string distance = "-";
-			Assert::AreEqual(true, ValChecker::distanceIsValid(distance));
+		TEST_METHOD(CheckTester) {
+			std::deque<std::string> swimmerDets = { "1", "John", "12/12/2222", "1", "12M","1.23", "Q"};
+			Assert::AreEqual(true, ValChecker::check(swimmerDets).size() < 1);
 		}
 
 	};
