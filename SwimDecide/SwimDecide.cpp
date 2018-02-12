@@ -15,29 +15,31 @@
 std::string fileName = "c:\\users\\john\\desktop\\book1.csv";
 
 int main(){
-	std::ifstream fin(fileName);
+	std::ifstream file(fileName, std::ios::binary);
 
-	while (!fin) {
+	while (!file) {
 		std::cout << "Problem opening file.\n";
 		std::cout << "Confirm file is in this location: " << fileName << "\n";
 		system("pause");
+		file.open(fileName, std::ios::binary);
+		system("cls");
 	}
 	std::string line;
-	std::getline(fin, line);
+	std::getline(file, line);
+
+	int startOfCurrentLine = 0;
 
 	int rowNum = 1;
-	while (!fin.eof()) {
+	while (!file.eof()) {
+		startOfCurrentLine = file.tellg();
+
 		std::string line;
-		std::getline(fin, line);
-		//std::cout << line << "\n";
-		std::deque<std::string> swimmerDets = CSVHelper::parseLine(line);
-		std::string error_string = ValChecker::check(swimmerDets);
-		if (error_string.size() > 0) {
-			std::cout << "Row " << rowNum << ": " << error_string << "\n";
-			std::cout << "Would you like to correct it? Y or N: \n";
-			system("pause");
-			continue;
-		}
+		std::getline(file, line);
+
+		std::deque<std::string> swimmerDetails = CSVHelper::parseLine(line);
+		std::string error_message = ValidityChecker::check(swimmerDetails);
+
+		
 		int a = 0;
 		/*for (std::deque<std::string>::iterator it = swimmerDets.begin(); it != swimmerDets.end(); ++it) {
 			std::cout << a << ": " << *it << "\n";
@@ -49,6 +51,24 @@ int main(){
 	}
 
 	system("pause");
+}
+
+bool handleError(std::string error_message, int rownumber) {
+	if (error_message.size() > 0) {
+		std::cout << "Row " << rownumber << ": " << error_message << "\n";
+		std::cout << "Would you like to Correct(C) or Skip(S) it?: ";
+		char choice;
+		while (true) {
+			std::cin >> choice;
+			if (choice == 'C') {
+
+			}
+		}
+	}
+}
+
+void moveBackToStartOfLine() {
+
 }
 
 

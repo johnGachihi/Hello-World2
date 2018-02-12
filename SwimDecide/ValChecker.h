@@ -23,7 +23,7 @@
 #define MONTH 1
 #define YEAR 2
 
-class ValChecker {
+class ValidityChecker {
 public:
 	static std::string check(std::deque<std::string> swimmerDets) {
 		if (swimmerDets.size() < NO_OF_COLUMNS)

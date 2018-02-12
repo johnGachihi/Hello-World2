@@ -15,12 +15,12 @@ namespace UnitTest1
 			bool isValid = false;
 			std::string date = "  12/12/1998";
 			//Assert::AreEqual(isValid, ValChecker::dateIsValid(date));
-			Assert::AreEqual(true, ValChecker::dateIsValid(date));
+			Assert::AreEqual(true, ValidityChecker::dateIsValid(date));
 		}
 
 		TEST_METHOD(CheckTester) {
 			std::deque<std::string> swimmerDets = { "1", "John", "12/12/2222", "1", "12M","1.23", "Q"};
-			Assert::AreEqual(true, ValChecker::check(swimmerDets).size() < 1);
+			Assert::AreEqual(true, ValidityChecker::check(swimmerDets).size() < 1);
 		}
 
 	};
