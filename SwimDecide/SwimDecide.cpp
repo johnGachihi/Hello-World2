@@ -6,42 +6,78 @@
 #include "ValChecker.h"
 #include <iostream>
 #include <fstream>
+#include <map>
+#include <algorithm>
 
-//struct Swimmer {
-//	std::string name;
-//	std::
-//};
+#define CORRECT_ERROR 'C'
+#define SKIP_ERROR 'S'
+#define INPUT_IS_INVALID true
+
+struct Swimmer {
+	std::string No;
+	std::string name;
+	std::string dob;
+	std::string heat;
+	int distance;
+	std::string time;
+	std::string status;
+
+	Swimmer(std::string No, std::string name, std::string dob,
+		std::string heat, int distance, std::string time, std::string status)
+	: No(No), name(name), dob(dob), heat(heat), distance(distance), time(time),
+		status(status){}
+};
+
+typedef std::map<int, std::deque<Swimmer>> SwimmersMap;
+
+void handleError(int& startOfErroneousLine, std::ifstream& file);
+void enableUserToHandleError(std::ifstream&, int&);
+void printFromSwimmersMap(SwimmersMap&);
+Swimmer createSwimmer(std::deque<std::string> swimmerDets);
 
 std::string fileName = "c:\\users\\john\\desktop\\book1.csv";
+SwimmersMap swimmers_map;
 
 int main(){
-	std::ifstream file(fileName, std::ios::binary);
+	std::ifstream csvfile(fileName, std::ios::binary);
 
-	while (!file) {
+	while (!csvfile) {
 		std::cout << "Problem opening file.\n";
 		std::cout << "Confirm file is in this location: " << fileName << "\n";
 		system("pause");
-		file.open(fileName, std::ios::binary);
+		csvfile.open(fileName, std::ios::binary);
 		system("cls");
 	}
 	std::string line;
-	std::getline(file, line);
+	std::getline(csvfile, line);
 
 	int startOfCurrentLine = 0;
-
 	int rowNum = 1;
-	while (!file.eof()) {
-		startOfCurrentLine = file.tellg();
+
+	while (!csvfile.eof()) {
+		startOfCurrentLine = csvfile.tellg();
 
 		std::string line;
-		std::getline(file, line);
+		std::getline(csvfile, line);
+		std::cout << line << "\n";
 
 		std::deque<std::string> swimmerDetails = CSVHelper::parseLine(line);
 		std::string error_message = ValidityChecker::check(swimmerDetails);
 
-		
-		int a = 0;
-		/*for (std::deque<std::string>::iterator it = swimmerDets.begin(); it != swimmerDets.end(); ++it) {
+		if (error_message.size() > 0) {
+			system("cls");
+			std::cout << "Error in Row " << rowNum << ": " << error_message << "\n";
+			std::cout << line << "\n";
+
+			handleError(startOfCurrentLine, csvfile);
+			continue;
+		}
+
+		Swimmer swimmer = createSwimmer(swimmerDetails);
+		swimmers_map[swimmer.distance].push_back(createSwimmer(swimmerDetails));
+
+		/*int a = 0;
+		for (std::deque<std::string>::iterator it = swimmerDets.begin(); it != swimmerDets.end(); ++it) {
 			std::cout << a << ": " << *it << "\n";
 			a++;
 		}
@@ -50,25 +86,71 @@ int main(){
 		rowNum++;
 	}
 
+	printFromSwimmersMap(swimmers_map);
+
 	system("pause");
 }
 
-bool handleError(std::string error_message, int rownumber) {
-	if (error_message.size() > 0) {
-		std::cout << "Row " << rownumber << ": " << error_message << "\n";
-		std::cout << "Would you like to Correct(C) or Skip(S) it?: ";
-		char choice;
-		while (true) {
-			std::cin >> choice;
-			if (choice == 'C') {
-
-			}
+void handleError(int& startOfErroneousLine, std::ifstream& file) {
+	std::cout << "Would you like to Correct(C) or Skip(S) it?: ";
+	char choice;
+	while (INPUT_IS_INVALID) {
+		std::cin >> choice;
+		choice = tolower(choice);
+		if (choice == 'c') {
+			enableUserToHandleError(file, startOfErroneousLine);
+			break;
+		}
+		else if (choice == 's')
+			break;
+		else {
+			std::cout << "Invalid input\n";
+			continue;
 		}
 	}
 }
 
-void moveBackToStartOfLine() {
-
+void enableUserToHandleError(std::ifstream& file, int& startOfCurrentLine) {
+	//file.seekg(startOfCurrentLine);
+	std::cout << "Opening file in excel .....\nRemember to save\n";
+	std::string cmdCommandToOpenFile = "start excel " + fileName;
+	system(cmdCommandToOpenFile.c_str());
+	system("pause");
+	file.close();
+	file.open(fileName, std::ios::binary);
+	file.seekg(startOfCurrentLine);
 }
 
+Swimmer createSwimmer(std::deque<std::string> swimmerDets) {
+	Swimmer swimmer(swimmerDets[SWIMMER_NO], swimmerDets[SWIMMER_NAME],
+		swimmerDets[SWIMMER_DOB], swimmerDets[SWIMMER_HEAT],
+		stoi(swimmerDets[SWIMMER_DISTANCE]), swimmerDets[SWIMMER_TIME],
+		swimmerDets[SWIMMER_STATUS]);
+	return swimmer;
+}
 
+//void sortSwimmersByTime(SwimmersMap& swimmers_map) {
+//	for (SwimmersMap::iterator it = swimmers_map.begin(); it != swimmers_map.end(); it++) {
+//		std::deque<std::deque<std::string>> swimDets = it->second;
+//		std::sort(swimDets.begin(), swimDets.end(), );
+//	}
+//}
+//
+//void sortAlgo(std::deque<std::string> a, std::deque<std::string> b) {
+//	if(a.)
+//}
+
+void printFromSwimmersMap(SwimmersMap& sw) {
+	for (SwimmersMap::iterator it = sw.begin(); it != sw.end(); it++) {
+		std::cout << it->first << std::endl;
+		std::deque<Swimmer> swimDets = it->second;
+		for (std::deque<Swimmer>::iterator itt = 
+			swimDets.begin(); itt != swimDets.end(); itt++) {
+			Swimmer swimmer = *itt;
+			std::cout << swimmer.name << " " << swimmer.distance
+				<< " " << swimmer.time << std::endl;
+			
+		}
+		std::cout << std::endl;
+	}
+}

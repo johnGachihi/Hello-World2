@@ -10,11 +10,12 @@
 
 #define SWIMMER_NO 0
 #define SWIMMER_NAME 1
-#define DOB 2
-#define HEAT 3
-#define DISTANCE 4
-#define TIME 5
-#define STATUS 6
+#define SWIMMER_DOB 2
+#define SWIMMER_HEAT 3
+#define SWIMMER_DISTANCE 4
+#define SWIMMER_TIME 5
+#define SWIMMER_STATUS 6
+
 #define NO_OF_COLUMNS 7
 
 #define DAYS_IN_MONTH 31
@@ -35,28 +36,34 @@ public:
 		if (swimmerDets[SWIMMER_NAME].empty())
 			return "Swimmer Name not provided";
 
-		if (!dateIsValid(swimmerDets[DOB]))
+		if (!dateIsValid(swimmerDets[SWIMMER_DOB]))
 			return "Invalid date of birth provided";
 
-		if (!isInteger(swimmerDets[HEAT]))
+		if (!isInteger(swimmerDets[SWIMMER_HEAT]))
 			return "Wrong type in column four";
 
-		if (!distanceIsValid(swimmerDets[DISTANCE]))
+		if (!distanceIsValid(swimmerDets[SWIMMER_DISTANCE]))
 			return "Distance is in wrong format";
 
-		if (!timeIsValid(swimmerDets[TIME]))
+		if (!timeIsValid(swimmerDets[SWIMMER_TIME]))
 			return "Error in time column";
 
-		std::string status = swimmerDets[STATUS];
+		std::string status = swimmerDets[SWIMMER_STATUS];
 		if (status != "" && status != "Q" &&
 			status != "DNF" && status != "DQ")
 			return "Error in status column. Input here can only be '-', 'Q','DNF', 'DQ'\nGiven: " + status;
+
+		if (swimmerDets[SWIMMER_TIME].empty() &&
+			swimmerDets[SWIMMER_STATUS] != "DNF")
+			return "Time not provided!";
 
 		return "";
 	}
 
 
 	static bool timeIsValid(std::string time) {
+		if (time.empty()) return true;
+
 		std::stringstream ss(time);
 		double _time;
 		ss >> _time;
@@ -83,6 +90,9 @@ public:
 	}
 
 	static bool isInteger(std::string data) {
+		if (data.size() <= 0)
+			return false;
+
 		for (int i = 0; i < data.size(); i++)
 			if (!isdigit(data[i]))
 				return false;
