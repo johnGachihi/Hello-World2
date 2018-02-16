@@ -30,10 +30,12 @@ struct Swimmer {
 
 typedef std::map<int, std::deque<Swimmer>> SwimmersMap;
 
-void handleError(int& startOfErroneousLine, std::ifstream& file);
+void handleError(int&, std::ifstream&);
 void enableUserToHandleError(std::ifstream&, int&);
 void printFromSwimmersMap(SwimmersMap&);
-Swimmer createSwimmer(std::deque<std::string> swimmerDets);
+Swimmer createSwimmer(std::deque<std::string>);
+bool sortAlgo(Swimmer, Swimmer);
+void sortSwimmersByTime(SwimmersMap&);
 
 std::string fileName = "c:\\users\\john\\desktop\\book1.csv";
 SwimmersMap swimmers_map;
@@ -86,6 +88,8 @@ int main(){
 		rowNum++;
 	}
 
+	sortSwimmersByTime(swimmers_map);
+
 	printFromSwimmersMap(swimmers_map);
 
 	system("pause");
@@ -129,16 +133,20 @@ Swimmer createSwimmer(std::deque<std::string> swimmerDets) {
 	return swimmer;
 }
 
-//void sortSwimmersByTime(SwimmersMap& swimmers_map) {
-//	for (SwimmersMap::iterator it = swimmers_map.begin(); it != swimmers_map.end(); it++) {
-//		std::deque<std::deque<std::string>> swimDets = it->second;
-//		std::sort(swimDets.begin(), swimDets.end(), );
-//	}
-//}
-//
-//void sortAlgo(std::deque<std::string> a, std::deque<std::string> b) {
-//	if(a.)
-//}
+void sortSwimmersByTime(SwimmersMap& swimmers_map) {
+	for (SwimmersMap::iterator it = swimmers_map.begin(); it != swimmers_map.end(); it++) {
+		std::cout << "Sorting: " << it->first << std::endl;
+		std::sort((it->second).begin(), (it->second).end(), sortAlgo);
+	}
+}
+
+bool sortAlgo(Swimmer swimmerA, Swimmer swimmerB) {
+	if (swimmerA.status != "Q" && swimmerB.status == "Q")
+		return false;
+	if (swimmerA.status == "Q" && swimmerB.status != "Q")
+		return true;
+	return swimmerA.time < swimmerB.time;
+}
 
 void printFromSwimmersMap(SwimmersMap& sw) {
 	for (SwimmersMap::iterator it = sw.begin(); it != sw.end(); it++) {
@@ -148,7 +156,7 @@ void printFromSwimmersMap(SwimmersMap& sw) {
 			swimDets.begin(); itt != swimDets.end(); itt++) {
 			Swimmer swimmer = *itt;
 			std::cout << swimmer.name << " " << swimmer.distance
-				<< " " << swimmer.time << std::endl;
+				<< " " << swimmer.time << " " << swimmer.status << std::endl;
 			
 		}
 		std::cout << std::endl;
