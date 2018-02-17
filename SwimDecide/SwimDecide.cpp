@@ -5,6 +5,7 @@
 #include "CSVHelper.h"
 #include "ValChecker.h"
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <map>
 #include <algorithm>
@@ -18,30 +19,34 @@ struct Swimmer {
 	std::string name;
 	std::string dob;
 	std::string heat;
-	int distance;
+	std::string distance;
 	std::string time;
 	std::string status;
 
 	Swimmer(std::string No, std::string name, std::string dob,
-		std::string heat, int distance, std::string time, std::string status)
+		std::string heat, std::string distance, std::string time, std::string status)
 	: No(No), name(name), dob(dob), heat(heat), distance(distance), time(time),
 		status(status){}
 };
 
 typedef std::map<int, std::deque<Swimmer>> SwimmersMap;
 
+std::ifstream openFile(std::string);
 void handleError(int&, std::ifstream&);
 void enableUserToHandleError(std::ifstream&, int&);
 void printFromSwimmersMap(SwimmersMap&);
 Swimmer createSwimmer(std::deque<std::string>);
 bool sortAlgo(Swimmer, Swimmer);
 void sortSwimmersByTime(SwimmersMap&);
+int getSizeOfLongestName(std::deque<Swimmer>);
+void formatPrint(Swimmer, int);
+void formatPrint(std::deque<std::string>, int);
 
 std::string fileName = "c:\\users\\john\\desktop\\book1.csv";
 SwimmersMap swimmers_map;
 
 int main(){
-	std::ifstream csvfile(fileName, std::ios::binary);
+	/*std::ifstream csvfile(fileName, std::ios::binary);
 
 	while (!csvfile) {
 		std::cout << "Problem opening file.\n";
@@ -49,7 +54,9 @@ int main(){
 		system("pause");
 		csvfile.open(fileName, std::ios::binary);
 		system("cls");
-	}
+	}*/
+	std::ifstream csvfile = openFile(fileName);
+
 	std::string line;
 	std::getline(csvfile, line);
 
@@ -76,7 +83,7 @@ int main(){
 		}
 
 		Swimmer swimmer = createSwimmer(swimmerDetails);
-		swimmers_map[swimmer.distance].push_back(createSwimmer(swimmerDetails));
+		swimmers_map[stoi(swimmer.distance)].push_back(createSwimmer(swimmerDetails));
 
 		/*int a = 0;
 		for (std::deque<std::string>::iterator it = swimmerDets.begin(); it != swimmerDets.end(); ++it) {
@@ -93,6 +100,19 @@ int main(){
 	printFromSwimmersMap(swimmers_map);
 
 	system("pause");
+}
+
+std::ifstream openFile(std::string fileName) {
+	std::ifstream csvfile(fileName, std::ios::binary);
+
+	while (!csvfile) {
+		std::cout << "Problem opening file.\n";
+		std::cout << "Confirm file is in this location: " << fileName << "\n";
+		system("pause");
+		openFile(fileName);
+		system("cls");
+	}
+	return csvfile;
 }
 
 void handleError(int& startOfErroneousLine, std::ifstream& file) {
@@ -128,7 +148,7 @@ void enableUserToHandleError(std::ifstream& file, int& startOfCurrentLine) {
 Swimmer createSwimmer(std::deque<std::string> swimmerDets) {
 	Swimmer swimmer(swimmerDets[SWIMMER_NO], swimmerDets[SWIMMER_NAME],
 		swimmerDets[SWIMMER_DOB], swimmerDets[SWIMMER_HEAT],
-		stoi(swimmerDets[SWIMMER_DISTANCE]), swimmerDets[SWIMMER_TIME],
+		swimmerDets[SWIMMER_DISTANCE], swimmerDets[SWIMMER_TIME],
 		swimmerDets[SWIMMER_STATUS]);
 	return swimmer;
 }
@@ -150,15 +170,38 @@ bool sortAlgo(Swimmer swimmerA, Swimmer swimmerB) {
 
 void printFromSwimmersMap(SwimmersMap& sw) {
 	for (SwimmersMap::iterator it = sw.begin(); it != sw.end(); it++) {
-		std::cout << it->first << std::endl;
-		std::deque<Swimmer> swimDets = it->second;
+		std::cout << it->first << "M race results\n";
+		int sizeOfLongestName = getSizeOfLongestName(it->second);
+		Swimmer titles = createSwimmer({ "No", "Name", "DOB", "Heat", "Distance", "Time", "Status" });
+		formatPrint(titles, sizeOfLongestName);
+		/*std::deque<Swimmer> swimDets = it->second;
 		for (std::deque<Swimmer>::iterator itt = 
 			swimDets.begin(); itt != swimDets.end(); itt++) {
 			Swimmer swimmer = *itt;
 			std::cout << swimmer.name << " " << swimmer.distance
 				<< " " << swimmer.time << " " << swimmer.status << std::endl;
 			
+		}*/
+		for (Swimmer swimmer : it->second) {
+			formatPrint(swimmer, sizeOfLongestName);
 		}
 		std::cout << std::endl;
 	}
+}
+
+int getSizeOfLongestName(std::deque<Swimmer> swimmers) {
+	Swimmer s = *std::max_element(swimmers.begin(), swimmers.end(),
+		[&](Swimmer swimmerA, Swimmer swimmerB) -> bool
+			{ return swimmerA.name.size() < swimmerB.name.size(); });
+	return s.name.size();
+}
+
+void formatPrint(Swimmer swimmer, int sizeOfLongestName) {
+	std::cout << std::left << std::setw(10) << swimmer.No;
+	std::cout << std::left << std::setw(sizeOfLongestName + 8) << swimmer.name;
+	std::cout << std::left << std::setw(15) << swimmer.dob;
+	std::cout << std::left << std::setw(8) << swimmer.heat;
+	std::cout << std::left << std::setw(10) << swimmer.distance;
+	std::cout << std::left << std::setw(10) << swimmer.time;
+	std::cout << std::left << std::setw(5) << swimmer.status << "\n";
 }

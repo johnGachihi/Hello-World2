@@ -99,8 +99,8 @@ public:
 		return true;
 	}
 
-	static bool dateIsValid(std::string &date) {
-		//Date format: DD/MM/YYYY
+	static bool dateIsValid(std::string& date) {
+		//Date format: 'DD/MM/YYYY'
 		std::string splitDate[3];
 		int index = 0;
 
@@ -110,7 +110,7 @@ public:
 			a = date.find(" ");
 		}
 
-		for (int i = 0; i < date.size(); i++) {				//  13/09/1998
+		for (int i = 0; i < date.size(); i++) {
 			if (date[i] == '/') {
 				if (++index > 2) {
 					std::cout << "More than three sections\n";
